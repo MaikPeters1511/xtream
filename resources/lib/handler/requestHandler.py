@@ -49,9 +49,14 @@ class CustomSecureHTTPSHandler(HTTPSHandler):
     def __init__(self, ip=None):
         # Create an SSL context with certifi's CA bundle.
         context = ssl.create_default_context(cafile=certifi.where())
-        # If an IP is provided, disable hostname checking (since we'll verify using SNI later).
-        context.check_hostname = False if ip else True
-        context.verify_mode = ssl.CERT_REQUIRED
+        if ip:
+            # DNS-Bypass: Verbindung per IP, Zertifikat wie im Standardpfad (ssl_verify=False) nicht pruefen,
+            # sonst scheitert es auf Geraeten mit veraltetem CA-Bundle (z. B. Fire TV).
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+        else:
+            context.check_hostname = True
+            context.verify_mode = ssl.CERT_REQUIRED
         self.ip = ip
         self.context = context
         super().__init__(context=context)
