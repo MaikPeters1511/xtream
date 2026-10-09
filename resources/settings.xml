@@ -1053,7 +1053,7 @@
 				</setting>
 				<setting id="plugin_serienstream.domain" type="string" label="30051">
 					<level>3</level>
-					<default>s.to</default>
+					<default>serienstream.to</default>
 					<constraints>
 						<options>
 							<option label="S.to">s.to</option>
