@@ -42,6 +42,17 @@ DOMAIN = cConfig().getSetting('plugin_' + SITE_IDENTIFIER + '.domain') # Domain 
 STATUS = cConfig().getSetting('plugin_' + SITE_IDENTIFIER + '_status') # Domain status code query
 ACTIVE = cConfig().getSetting('plugin_' + SITE_IDENTIFIER) # Whether plugin is active or not
 
+# Leere oder nicht aufloesbare Domain (z. B. s.to bei DNS-Sperre) -> serienstream.to
+if not DOMAIN:
+    DOMAIN = 'serienstream.to'
+elif DOMAIN == 's.to':
+    try:
+        import socket
+        socket.gethostbyname(DOMAIN)
+    except Exception:
+        logger.info('-> [SitePlugin]: s.to nicht aufloesbar, nutze serienstream.to')
+        DOMAIN = 'serienstream.to'
+
 # URL_MAIN = 'https://s.to/'
 if DOMAIN == '186.2.175.5': # For proxy change, update IP here and in settings
     URL_MAIN = 'http://' + DOMAIN
