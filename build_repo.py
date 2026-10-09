@@ -15,6 +15,22 @@ def strip(s):
 ver = re.search(r'<addon[^>]*version="([^"]+)"', open('addon.xml', encoding='utf-8').read()).group(1)
 repo_xml = open('docs/repository.xstream.addon.xml', encoding='utf-8').read().replace('{B}', B)
 
+repo_ver = re.search(r'<addon[^>]*version="([^"]+)"', repo_xml).group(1)
+REPO = 'repository.xstream'
+os.makedirs(R + '/' + REPO, exist_ok=True)
+for f in os.listdir(R + '/' + REPO):
+    os.remove(os.path.join(R, REPO, f))
+for f in os.listdir('docs'):
+    if f.startswith(REPO + '-') and f.endswith('.zip'):
+        os.remove(os.path.join('docs', f))
+for target in (f'{R}/{REPO}/{REPO}-{repo_ver}.zip', f'docs/{REPO}-{repo_ver}.zip'):
+    with zipfile.ZipFile(target, 'w', zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr(REPO + '/addon.xml', repo_xml)
+# index.html verweist auf die aktuelle Repository-ZIP
+idx = open('docs/index.html', encoding='utf-8').read()
+idx = re.sub(r'repository\.xstream-[\d.]+\.zip', f'{REPO}-{repo_ver}.zip', idx)
+open('docs/index.html', 'w', encoding='utf-8').write(idx)
+
 os.makedirs(R + '/' + PLUGIN, exist_ok=True)
 for f in os.listdir(R + '/' + PLUGIN):
     os.remove(os.path.join(R, PLUGIN, f))
