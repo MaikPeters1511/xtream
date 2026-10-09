@@ -93,7 +93,7 @@ def extractPoster(sHtml):
 def _fetchPosterFallback(sUrl):
     """Holt Poster per Detail-Request — nur als Fallback wenn kein Bild im HTML."""
     try:
-        oReq = cRequestHandler(sUrl, caching=True)
+        oReq = cRequestHandler(sUrl, caching=True, bypass_dns=True)
         sHtml = oReq.request()
         if sHtml:
             return extractPoster(sHtml)
@@ -142,7 +142,7 @@ def showCatalog():
     sUrl = params.getValue('sUrl')
     sTargetGenre = params.getValue('sGenreFilter')
     
-    oRequest = cRequestHandler(sUrl)
+    oRequest = cRequestHandler(sUrl, bypass_dns=True)
     sHtmlContent = oRequest.request()
     if not sHtmlContent: return
     oGui = cGui()
@@ -212,7 +212,7 @@ def showCatalog():
 def showGenericMenu():
     params = ParameterHandler()
     sUrl = params.getValue('sUrl')
-    sHtmlContent = cRequestHandler(sUrl).request()
+    sHtmlContent = cRequestHandler(sUrl, bypass_dns=True).request()
     if not sHtmlContent: return
     oGui = cGui()
 
@@ -257,7 +257,7 @@ def showGenreEntries():
     iPage        = int(params.getValue('iPage') or 1)
     oGui = cGui()
 
-    sHtmlContent = cRequestHandler(sUrl).request()
+    sHtmlContent = cRequestHandler(sUrl, bypass_dns=True).request()
     if not sHtmlContent:
         oGui.showInfo()
         return
@@ -331,7 +331,7 @@ def showGenreEntries():
 def showValue():
     params = ParameterHandler()
     sUrl = params.getValue('sUrl')
-    oRequest = cRequestHandler(sUrl)
+    oRequest = cRequestHandler(sUrl, bypass_dns=True)
     sHtmlContent = oRequest.request()
     isMatch, sContainer = cParser.parseSingleResult(sHtmlContent, '<ul[^>]*class="%s"[^>]*>(.*?)<\\/ul>' % params.getValue('sCont'))
     if isMatch:
@@ -352,7 +352,7 @@ def showAllSeries(entryUrl=False, sGui=False, sSearchText=False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     iPage = int(params.getValue('iPage') or 1)
-    oRequest = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False))
+    oRequest = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False), bypass_dns=True)
     sHtmlContent = oRequest.request()
     pattern = '<a[^>]*href="(\\/serie\\/[^"]*)"[^>]*>(.*?)</a>'
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
@@ -416,7 +416,7 @@ def showGenericSeriesList(entryUrl=False):
     sUrl = params.getValue('sUrl') or (URL_MAIN + '/beliebte-serien')
     sectionName = params.getValue('sectionName')
     
-    oRequest = cRequestHandler(sUrl)
+    oRequest = cRequestHandler(sUrl, bypass_dns=True)
     sHtmlContent = oRequest.request()
     # Clean HTML: collapse all whitespace/newlines to single space
     sHtmlContent = re.sub(r'\s+', ' ', sHtmlContent)
@@ -481,7 +481,7 @@ def showNeues():
 def showNeusteStaffel():
     """Zeigt 'Neuste Staffel diese Woche' von der Beliebte-Serien-Seite."""
     oGui = cGui()
-    sHtmlContent = cRequestHandler(URL_POPULAR, caching=True).request()
+    sHtmlContent = cRequestHandler(URL_POPULAR, caching=True, bypass_dns=True).request()
     if not sHtmlContent: return
     sHtmlContent = re.sub(r'\s+', ' ', sHtmlContent)
 
@@ -531,7 +531,7 @@ def showNeusteStaffel():
 def showMeistgesehen():
     """Zeigt 'Meistgesehen gerade' von der Beliebte-Serien-Seite."""
     oGui = cGui()
-    sHtmlContent = cRequestHandler(URL_POPULAR, caching=True).request()
+    sHtmlContent = cRequestHandler(URL_POPULAR, caching=True, bypass_dns=True).request()
     if not sHtmlContent: return
     sHtmlContent = re.sub(r'\s+', ' ', sHtmlContent)
 
@@ -581,7 +581,7 @@ def showMeistgesehen():
 def showNeusteEpisoden():
     """Zeigt die neusten Episoden direkt von der Homepage."""
     oGui = cGui()
-    sHtmlContent = cRequestHandler(URL_MAIN, caching=True).request()
+    sHtmlContent = cRequestHandler(URL_MAIN, caching=True, bypass_dns=True).request()
     if not sHtmlContent:
         oGui.showInfo()
         return
@@ -665,7 +665,7 @@ def showTrendSection():
     iPage    = int(params.getValue('iPage') or 1)
     oGui     = cGui()
 
-    sHtmlContent = cRequestHandler(URL_MAIN, caching=True).request()
+    sHtmlContent = cRequestHandler(URL_MAIN, caching=True, bypass_dns=True).request()
     if not sHtmlContent:
         oGui.showInfo()
         return
@@ -763,7 +763,7 @@ def showCollections():
     sUrl   = params.getValue('sUrl') or URL_COLLECTIONS
     oGui   = cGui()
 
-    sHtmlContent = cRequestHandler(sUrl, caching=True).request()
+    sHtmlContent = cRequestHandler(sUrl, caching=True, bypass_dns=True).request()
     if not sHtmlContent:
         oGui.showInfo()
         return
@@ -819,7 +819,7 @@ def showCollectionEntries():
     sName  = params.getValue('sName') or ''
     oGui   = cGui()
 
-    sHtmlContent = cRequestHandler(sUrl, caching=True).request()
+    sHtmlContent = cRequestHandler(sUrl, caching=True, bypass_dns=True).request()
     if not sHtmlContent:
         oGui.showInfo()
         return
@@ -899,7 +899,7 @@ def showNewSeries():
     """
     oGui = cGui()
 
-    sHtmlContent = cRequestHandler(URL_MAIN, caching=True).request()
+    sHtmlContent = cRequestHandler(URL_MAIN, caching=True, bypass_dns=True).request()
     if not sHtmlContent:
         oGui.showInfo()
         return
@@ -962,7 +962,7 @@ def showHomeSection():
     section_id = params.getValue('section_id')
     oGui = cGui()
     
-    sHtmlContent = cRequestHandler(URL_MAIN, caching=True).request()
+    sHtmlContent = cRequestHandler(URL_MAIN, caching=True, bypass_dns=True).request()
     if sHtmlContent:
         sHtmlContent = re.sub(r'\s+', ' ', sHtmlContent)
         # Search from ID to next section or end of tab-content
@@ -1042,7 +1042,7 @@ def renderCards(oGui, sHtml):
     
 def showBeliebte(sGui=False):
     oGui = sGui if sGui else cGui()
-    sHtmlContent = cRequestHandler(URL_POPULAR, caching=True).request()
+    sHtmlContent = cRequestHandler(URL_POPULAR, caching=True, bypass_dns=True).request()
     
     if not sHtmlContent: return
     sHtmlContent = re.sub(r'\s+', ' ', sHtmlContent)
@@ -1078,7 +1078,7 @@ def showSectionContent():
     sTargetTitle = params.getValue('sSectionTitle')
     oGui = cGui()
     
-    sHtmlContent = cRequestHandler(URL_POPULAR, caching=True).request()
+    sHtmlContent = cRequestHandler(URL_POPULAR, caching=True, bypass_dns=True).request()
     if not sHtmlContent: return
     sHtmlContent = re.sub(r'\s+', ' ', sHtmlContent)
 
@@ -1129,7 +1129,7 @@ def showSeasons():
     sThumbnail = params.getValue('sThumbnail')
     
     oGui = cGui()
-    sHtmlContent = cRequestHandler(sUrl, caching=True).request()
+    sHtmlContent = cRequestHandler(sUrl, caching=True, bypass_dns=True).request()
     if not sHtmlContent: return
 
     # 1. Serienname fixen (falls von Favoriten/Suche kommend)
@@ -1209,7 +1209,7 @@ def showEpisodes():
     sThumbnail = params.getValue('sThumbnail')
     sDesc = params.getValue('sDescription')
     
-    oRequest = cRequestHandler(sUrl, caching=False)
+    oRequest = cRequestHandler(sUrl, caching=False, bypass_dns=True)
     sHtmlContent = oRequest.request()
     if not sHtmlContent: return
 
@@ -1292,7 +1292,7 @@ def showEpisodes():
 def showHosters():
     hosters = []
     sUrl = ParameterHandler().getValue('sUrl')
-    sHtmlContent = cRequestHandler(sUrl, caching=False).request()
+    sHtmlContent = cRequestHandler(sUrl, caching=False, bypass_dns=True).request()
     
     if not sHtmlContent:
         return []
@@ -1341,7 +1341,7 @@ def showHosters():
 
 def getHosterUrl(hUrl):
     if type(hUrl) == str: hUrl = ast.literal_eval(hUrl)
-    Request = cRequestHandler(URL_MAIN + hUrl[0], caching=False)
+    Request = cRequestHandler(URL_MAIN + hUrl[0], caching=False, bypass_dns=True)
     Request.addHeaderEntry('Referer', ParameterHandler().getValue('entryUrl'))
     Request.addHeaderEntry('Upgrade-Insecure-Requests', '1')
     Request.request()
@@ -1388,7 +1388,7 @@ def SSsearch(sGui=False, sSearchText=False, iPage=1):
     # Wichtig: Seite als Zahl mitschicken
     sUrl = f"{URL_MAIN}/suche?term={quote_plus(str(sSearchText))}&tab=shows&page={str(iPage)}"
     
-    oRequest = cRequestHandler(sUrl, caching=True)
+    oRequest = cRequestHandler(sUrl, caching=True, bypass_dns=True)
     sHtmlContent = oRequest.request()
     
     if not sHtmlContent:
